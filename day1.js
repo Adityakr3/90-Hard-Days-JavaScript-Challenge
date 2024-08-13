@@ -12,4 +12,4 @@ function Is_A_Palindrome(str){
    }
    return true
 }
-console.log(Is_A_Palindrome("adiqda"));
+console.log(Is_A_Palindrome("adida"));
