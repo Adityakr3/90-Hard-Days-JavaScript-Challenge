@@ -7,10 +7,8 @@ function reverseAngleTriangle(num) {
         }
         for (let j = 0; j < i+1; j++) {
            row += ' *'
-            
         }
-        console.log(row);
-        
+        console.log(row);  
     }
 }
 reverseAngleTriangle(5)
