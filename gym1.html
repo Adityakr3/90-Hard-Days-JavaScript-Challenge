@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+</style>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-blue-600">FitManager</h1>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button onclick="showTab('members')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Members</button>
+                        <button onclick="showTab('trainers')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Trainers</button>
+                        <button onclick="showTab('schedule')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Schedule</button>
+                        <button onclick="showTab('payments')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Payments</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Members Section -->
+            <div id="members" class="tab-content active">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Members</h2>
+                    <button onclick="showModal('memberModal')" class="bg-blue-600 text-white px-4 py-2 rounded-md">Add Member</button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersList" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Trainers Section -->
+            <div id="trainers" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Trainers</h2>
+                    <button onclick="showModal('trainerModal')" class="bg-blue-600 text-white px-4 py-2 rounded-md">Add Trainer</button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Specialization</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainersList" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Schedule Section -->
+            <div id="schedule" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Class Schedule</h2>
+                    <button onclick="showModal('classModal')" class="bg-blue-600 text-white px-4 py-2 rounded-md">Add Class</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="scheduleList"></div>
+            </div>
+
+            <!-- Payments Section -->
+            <div id="payments" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Payments</h2>
+                    <button onclick="showModal('paymentModal')" class="bg-blue-600 text-white px-4 py-2 rounded-md">Record Payment</button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsList" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Member Modal -->
+    <div id="memberModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Member</h3>
+                <form id="memberForm" class="space-y-4">
+                    <input type="text" name="name" placeholder="Full Name" class="w-full p-2 border rounded">
+                    <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded">
+                    <input type="tel" name="phone" placeholder="Phone" class="w-full p-2 border rounded">
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="hideModal('memberModal')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trainer Modal -->
+    <div id="trainerModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Trainer</h3>
+                <form id="trainerForm" class="space-y-4">
+                    <input type="text" name="name" placeholder="Full Name" class="w-full p-2 border rounded">
+                    <input type="text" name="specialization" placeholder="Specialization" class="w-full p-2 border rounded">
+                    <input type="tel" name="contact" placeholder="Contact" class="w-full p-2 border rounded">
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="hideModal('trainerModal')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Modal -->
+    <div id="classModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Class</h3>
+                <form id="classForm" class="space-y-4">
+                    <input type="text" name="className" placeholder="Class Name" class="w-full p-2 border rounded">
+                    <select name="trainer" class="w-full p-2 border rounded">
+                        <option value="">Select Trainer</option>
+                    </select>
+                    <input type="datetime-local" name="time" class="w-full p-2 border rounded">
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="hideModal('classModal')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Record Payment</h3>
+                <form id="paymentForm" class="space-y-4">
+                    <select name="member" class="w-full p-2 border rounded">
+                        <option value="">Select Member</option>
+                    </select>
+                    <input type="number" name="amount" placeholder="Amount" class="w-full p-2 border rounded">
+                    <input type="date" name="date" class="w-full p-2 border rounded">
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="hideModal('paymentModal')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let members = [];
+        let trainers = [];
+        let classes = [];
+        let payments = [];
+
+        // Tab Management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Modal Management
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Form Handlers
+        document.getElementById('memberForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const member = {
+                id: Date.now(),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                status: 'Active'
+            };
+            members.push(member);
+            renderMembers();
+            hideModal('memberModal');
+            e.target.reset();
+        });
+
+        document.getElementById('trainerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const trainer = {
+                id: Date.now(),
+                name: formData.get('name'),
+                specialization: formData.get('specialization'),
+                contact: formData.get('contact')
+            };
+            trainers.push(trainer);
+            renderTrainers();
+            hideModal('trainerModal');
+            e.target.reset();
+        });
+
+        document.getElementById('classForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const classItem = {
+                id: Date.now(),
+                name: formData.get('className'),
+                trainer: formData.get('trainer'),
+                time: formData.get('time')
+            };
+            classes.push(classItem);
+            renderSchedule();
+            hideModal('classModal');
+            e.target.reset();
+        });
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const payment = {
+                id: Date.now(),
+                member: formData.get('member'),
+                amount: formData.get('amount'),
+                date: formData.get('date'),
+                status: 'Paid'
+            };
+            payments.push(payment);
+            renderPayments();
+            hideModal('paymentModal');
+            e.target.reset();
+        });
+
+        // Render Functions
+        function renderMembers() {
+            const tbody = document.getElementById('membersList');
+            tbody.innerHTML = members.map(member => `
+                <tr>
+                    <td class="px-6 py-4">${member.name}</td>
+                    <td class="px-6 py-4">${member.email}</td>
+                    <td class="px-6 py-4">${member.phone}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${
+                            member.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }">${member.status}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button onclick="deleteMember(${member.id})" class="text-red-600 hover:text-red-900">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTrainers() {
+            const tbody = document.getElementById('trainersList');
+            tbody.innerHTML = trainers.map(trainer => `
+                <tr>
+                    <td class="px-6 py-4">${trainer.name}</td>
+                    <td class="px-6 py-4">${trainer.specialization}</td>
+                    <td class="px-6 py-4">${trainer.contact}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="deleteTrainer(${trainer.id})" class="text-red-600 hover:text-red-900">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleList');
+            container.innerHTML = classes.map(classItem => `
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h3 class="font-semibold text-lg mb-2">${classItem.name}</h3>
+                    <p class="text-gray-600">Trainer: ${classItem.trainer}</p>
+                    <p class="text-gray-600">Time: ${new Date(classItem.time).toLocaleString()}</p>
+                    <button onclick="deleteClass(${classItem.id})" class="mt-2 text-red-600 hover:text-red-900">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderPayments() {
+            const tbody = document.getElementById('paymentsList');
+            tbody.innerHTML = payments.map(payment => `
+                <tr>
+                    <td class="px-6 py-4">${payment.member}</td>
+                    <td class="px-6 py-4">$${payment.amount}</td>
+                    <td class="px-6 py-4">${new Date(payment.date).toLocaleDateString()}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            ${payment.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Delete Functions
+        function deleteMember(id) {
+            members = members.filter(m => m.id !== id);
+            renderMembers();
+        }
+
+        function deleteTrainer(id) {
+            trainers = trainers.filter(t => t.id !== id);
+            renderTrainers();
+        }
+
+        function deleteClass(id) {
+            classes = classes.filter(c => c.id !== id);
+            renderSchedule();
+        }
+
+        // Initial render
+        renderMembers();
+        renderTrainers();
+        renderSchedule();
+        renderPayments();
+    </script>
+</body>
+</html>
